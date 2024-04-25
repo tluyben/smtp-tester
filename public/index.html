@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Sender</title>
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      form {
+        max-width: 90%;
+        margin: 0 auto;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="email"],
+      input[type="password"],
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      input[type="radio"] {
+        margin-right: 5px;
+      }
+
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+
+      #atlabel {
+        margin-top: 100px;
+      }
+      #htmlEditor {
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Email Sender</h1>
+    <form action="/send" method="post" enctype="multipart/form-data">
+      <label for="host">SMTP Host:</label>
+      <input type="text" id="host" name="host" required />
+
+      <label for="port">SMTP Port:</label>
+      <input type="number" id="port" name="port" required />
+
+      <label for="user">SMTP User:</label>
+      <input type="text" id="user" name="user" required />
+
+      <label for="pass">SMTP Password:</label>
+      <input type="password" id="pass" name="pass" required />
+
+      <label for="from">From:</label>
+      <input type="email" id="from" name="from" required />
+
+      <label for="to">To:</label>
+      <input type="email" id="to" name="to" required />
+
+      <label for="subject">Subject:</label>
+      <input type="text" id="subject" name="subject" required />
+
+      <label for="bodyType">Body Type:</label>
+      <input
+        type="radio"
+        id="text"
+        name="bodyType"
+        value="text"
+        checked
+        onchange="toggleEditor()"
+      />
+      <label for="text">Text</label>
+      <input
+        type="radio"
+        id="html"
+        name="bodyType"
+        value="html"
+        onchange="toggleEditor()"
+      />
+      <label for="html">HTML</label><br />
+
+      <div id="textEditor">
+        <label for="body">Body:</label><br />
+        <textarea id="body" name="body" rows="15" cols="50" required></textarea
+        ><br />
+      </div>
+
+      <div id="htmlEditor" style="display: none">
+        <label for="htmlBody">Body (HTML):</label><br />
+        <div id="editor"></div>
+        <input type="hidden" id="htmlBody" name="htmlBody" />
+      </div>
+
+      <label id="atlabel" for="attachments">Attachments:</label>
+      <input type="file" id="attachments" name="attachments" multiple />
+
+      <input type="submit" value="Send" />
+    </form>
+    <script>
+      var quill = new Quill("#editor", {
+        theme: "snow",
+      });
+
+      function toggleEditor() {
+        var textEditor = document.getElementById("textEditor");
+        var htmlEditor = document.getElementById("htmlEditor");
+        var bodyType = document.querySelector(
+          'input[name="bodyType"]:checked'
+        ).value;
+
+        if (bodyType === "text") {
+          textEditor.style.display = "block";
+          htmlEditor.style.display = "none";
+        } else {
+          textEditor.style.display = "none";
+          htmlEditor.style.display = "block";
+        }
+      }
+
+      document.querySelector("form").addEventListener("submit", function () {
+        var htmlBody = document.getElementById("htmlBody");
+        htmlBody.value = quill.root.innerHTML;
+      });
+    </script>
+  </body>
+</html>
